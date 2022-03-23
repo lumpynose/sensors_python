@@ -1,25 +1,11 @@
-'''
-Created on Mar 14, 2022
-
-@author: rusty
-'''
-
 import paho.mqtt.client as mqtt
 from datetime import datetime
 import time
 import json
-
+import logging
 
 class Mqtt_zigbee(object):
-    '''
-    classdocs
-    '''
-
     def __init__(self, sensors):
-        '''
-        Constructor
-        '''
-
         self.sensors = sensors
 
         self.client = mqtt.Client()
@@ -33,7 +19,7 @@ class Mqtt_zigbee(object):
         self.client.loop_start()
 
     def on_message(self, client, userdata, msg):
-        # print("{} {}".format(msg.topic, msg.payload.decode()))
+        logging.debug("{} {}".format(msg.topic, msg.payload.decode()))
 
         if "temperature" in json.loads(msg.payload.decode()):
             sensor = msg.topic.split("/")

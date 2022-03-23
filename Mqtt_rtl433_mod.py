@@ -1,25 +1,11 @@
-'''
-Created on Mar 14, 2022
-
-@author: rusty
-'''
-
 import paho.mqtt.client as mqtt
 from datetime import datetime
 import time
 import json
-
+import logging
 
 class Mqtt_rtl433(object):
-    '''
-    classdocs
-    '''
-
     def __init__(self, sensors):
-        '''
-        Constructor
-        '''
-
         self.sensor_names = ("Prologue-TH", "Acurite-Tower", "Oregon-THGR122N")
 
         self.sensors = sensors
@@ -35,7 +21,7 @@ class Mqtt_rtl433(object):
         self.client.loop_start()
 
     def on_message(self, client, userdata, msg):
-        # Sprint("{} {}".format(msg.topic, msg.payload.decode()))
+        logging.debug("{} {}".format(msg.topic, msg.payload.decode()))
 
         if "temperature_F" in json.loads(msg.payload.decode()):
             sensor = msg.topic.split("/")

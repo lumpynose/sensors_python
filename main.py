@@ -4,6 +4,8 @@ from tkinter import ttk
 from Mqtt_zigbee_mod import Mqtt_zigbee
 from Mqtt_rtl433_mod import Mqtt_rtl433
 
+import logging
+
 global main_frame
 global sensors
 
@@ -43,13 +45,13 @@ def add_row(row, sensor, tempt):
 
 
 def do_run():
-    if len(sensors) == 0:
-        print("sensors: {}".format(sensors))
+    # if len(sensors) == 0:
+    #     print("sensors: {}".format(sensors))
 
     row = 0
 
     for sensor, tempt in sensors.items():
-        print("{}: {}: {} ({})".format(tempt[0], sensor, tempt[1], tempt[2]))
+        # print("{}: {}: {} ({})".format(tempt[0], sensor, tempt[1], tempt[2]))
 
         if tempt[2] is None:
             add_row(row, sensor, tempt)
@@ -63,6 +65,8 @@ def do_run():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='d:\\tmp\\temp.log', encoding='utf-8', level=logging.DEBUG)
+    
     root = Tk();
 
     root.title("temperatures")
