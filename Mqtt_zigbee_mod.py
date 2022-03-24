@@ -10,7 +10,7 @@ class Mqtt_zigbee(object):
     def __init__(self, sensor_values):
         self.sensor_values = sensor_values
 
-        self.logger = logging.getLogger('sensor_values.zigbee')
+        self.logger = logging.getLogger('sensor.zigbee')
 
         self.client = mqtt.Client()
 
