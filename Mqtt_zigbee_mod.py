@@ -50,6 +50,7 @@ class Mqtt_zigbee(object):
                                    "temperature": tempt}})
 
 
+# debug main
 if __name__ == '__main__':
     sensors = dict()
 
@@ -60,6 +61,6 @@ if __name__ == '__main__':
         # print("sensor_values: {}".format(sensor_values))
         print("---")
         for sensor, tempt in sensors.items():
-            print("{}: {}: {} ({})".format(tempt[0], sensor, tempt[1], tempt[2]))
+            print("{}".format(sensor))
 
     print("done")
