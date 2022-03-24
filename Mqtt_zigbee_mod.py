@@ -4,9 +4,13 @@ import time
 import json
 import logging
 
+
 class Mqtt_zigbee(object):
-    def __init__(self, sensors):
-        self.sensors = sensors
+
+    def __init__(self, sensor_values):
+        self.sensor_values = sensor_values
+
+        self.logger = logging.getLogger('sensor_values.zigbee')
 
         self.client = mqtt.Client()
 
@@ -16,10 +20,14 @@ class Mqtt_zigbee(object):
 
         self.client.subscribe("zigbee2mqtt/temperature/+")
 
+        self.client.reconnect_delay_set(min_delay = 1, max_delay = 120)
+
+        self.client.enable_logger(self.logger)
+
         self.client.loop_start()
 
     def on_message(self, client, userdata, msg):
-        logging.debug("{} {}".format(msg.topic, msg.payload.decode()))
+        self.logger.debug("{} {}".format(msg.topic, msg.payload.decode()))
 
         if "temperature" in json.loads(msg.payload.decode()):
             sensor = msg.topic.split("/")
@@ -33,11 +41,13 @@ class Mqtt_zigbee(object):
 
             now = datetime.now()
 
-            if sensor_name in self.sensors.keys():
-                frame = self.sensors[sensor_name][2]
-                self.sensors[sensor_name] = [now.strftime("%H:%M"), tempt, frame]
+            if sensor_name in self.sensor_values.keys():
+                self.sensor_values[sensor_name]["time"] = now.strftime("%H:%M")
+                self.sensor_values[sensor_name]["temperature"] = tempt
             else:
-                self.sensors[sensor_name] = [now.strftime("%H:%M"), tempt, None]
+                self.sensor_values.update({sensor_name:
+                                  {"time": now.strftime("%H:%M"),
+                                   "temperature": tempt}})
 
 
 if __name__ == '__main__':
@@ -47,7 +57,7 @@ if __name__ == '__main__':
 
     while True:
         time.sleep(1)
-        # print("sensors: {}".format(sensors))
+        # print("sensor_values: {}".format(sensor_values))
         print("---")
         for sensor, tempt in sensors.items():
             print("{}: {}: {} ({})".format(tempt[0], sensor, tempt[1], tempt[2]))

@@ -1,13 +1,15 @@
-from tkinter import Tk, N, W, E, S
+from tkinter import *
 from tkinter import ttk
 
 from Mqtt_zigbee_mod import Mqtt_zigbee
 from Mqtt_rtl433_mod import Mqtt_rtl433
 
 import logging
+import os
 
 global main_frame
-global sensors
+global sensor_rows, sensor_values
+global logger
 
 
 def set_style():
@@ -25,7 +27,7 @@ def set_style():
         font = ("Arial", 8))
 
 
-def add_row(row, sensor, tempt):
+def add_row(row, sensor):
     sensor_frame = ttk.Frame(main_frame, padding = (0, 8, 0, 8),
         style = "Sensor.TFrame")
     sensor_frame.grid(column = 0, row = row, sticky = (E, W))
@@ -34,30 +36,37 @@ def add_row(row, sensor, tempt):
     l = ttk.Label(sensor_frame, text = sensor,
         anchor = "center", style = "Sensor.TLabel")
     l.grid(column = 0, row = 0, sticky = (E, W))
-    l = ttk.Label(sensor_frame, text = tempt[1], anchor = "center",
+
+    temperature = StringVar(value = float(0.0))
+    l = ttk.Label(sensor_frame, textvariable = temperature, anchor = "center",
         style = "Value.TLabel")
     l.grid(column = 0, row = 1, sticky = (E, W))
-    l = ttk.Label(sensor_frame, text = tempt[0], anchor = "center",
+
+    time = StringVar(value = "00:00")
+    l = ttk.Label(sensor_frame, textvariable = time, anchor = "center",
         style = "ValueTime.TLabel")
     l.grid(column = 0, row = 2, sticky = (E, W))
 
-    tempt[2] = sensor_frame
+    sensor_rows.update({sensor:{"time":time, "temperature":temperature}})
 
 
 def do_run():
-    # if len(sensors) == 0:
-    #     print("sensors: {}".format(sensors))
+    logger = logging.getLogger('sensors.do_run')
+
+    # if len(sensor_values) == 0:
+    logger.debug("sensors: {}".format(sensor_values))
 
     row = 0
 
-    for sensor, tempt in sensors.items():
-        # print("{}: {}: {} ({})".format(tempt[0], sensor, tempt[1], tempt[2]))
+    for sensor in sensor_values.keys():
+        logger.debug("{}".format(sensor))
 
-        if tempt[2] is None:
-            add_row(row, sensor, tempt)
-        else:
-            tempt[2].winfo_children()[1]["text"] = tempt[1]
-            tempt[2].winfo_children()[2]["text"] = tempt[0]
+        if sensor not in sensor_rows.keys():
+            logger.debug("add row: {}, {}".format(row, sensor))
+            add_row(row, sensor)
+
+        sensor_rows[sensor]["time"].set(sensor_values[sensor]["time"])
+        sensor_rows[sensor]["temperature"].set(sensor_values[sensor]["temperature"])
 
         row = row + 1
 
@@ -65,8 +74,12 @@ def do_run():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='d:\\tmp\\temp.log', encoding='utf-8', level=logging.DEBUG)
-    
+    log_file = "d:\\tmp\\temp.log"
+    if os.path.exists(log_file):
+        os.remove(log_file)
+    logging.basicConfig(filename = log_file, encoding = 'utf-8', level = logging.DEBUG)
+    logger = logging.getLogger('sensors')
+
     root = Tk();
 
     root.title("temperatures")
@@ -78,10 +91,11 @@ if __name__ == '__main__':
     root.columnconfigure(0, weight = 1)
     root.rowconfigure(0, weight = 1)
 
-    sensors = dict()
+    sensor_rows = dict()
+    sensor_values = dict()
 
-    mqz = Mqtt_zigbee(sensors)
-    mqr = Mqtt_rtl433(sensors)
+    mqz = Mqtt_zigbee(sensor_values)
+    mqr = Mqtt_rtl433(sensor_values)
 
     set_style()
 
