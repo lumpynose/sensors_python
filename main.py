@@ -77,7 +77,11 @@ if __name__ == '__main__':
     log_file = "d:\\tmp\\temp.log"
     if os.path.exists(log_file):
         os.remove(log_file)
-    logging.basicConfig(filename = log_file, encoding = 'utf-8', level = logging.DEBUG)
+    logging.basicConfig(filename = log_file,
+                        encoding = 'utf-8',
+                        format = '%(asctime)s %(message)s',
+                        datefmt = '%I:%M:%S',
+                        level = logging.DEBUG)
     logger = logging.getLogger('sensors')
 
     root = Tk();

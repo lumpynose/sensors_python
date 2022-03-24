@@ -14,15 +14,15 @@ class Mqtt_zigbee(object):
 
         self.client = mqtt.Client()
 
-        self.client.on_message = self.on_message
-
-        self.client.connect("192.168.50.5")
-
-        self.client.subscribe("zigbee2mqtt/temperature/+")
-
         self.client.reconnect_delay_set(min_delay = 1, max_delay = 120)
 
         self.client.enable_logger(self.logger)
+
+        self.client.on_connect = self.on_connect
+        self.client.on_disconnect = self.on_disconnect
+        self.client.on_message = self.on_message
+
+        self.client.connect("192.168.50.5")
 
         self.client.loop_start()
 
@@ -48,6 +48,16 @@ class Mqtt_zigbee(object):
                 self.sensor_values.update({sensor_name:
                                   {"time": now.strftime("%H:%M"),
                                    "temperature": tempt}})
+
+    def on_connect(self, client, userdata, flags, rc):
+        self.logger.debug("connected: {}".format(rc))
+
+        if rc == 0:
+            self.client.subscribe("zigbee2mqtt/temperature/#", qos = 2)
+
+    def on_disconnect(self, client, userdata, rc):
+        if rc != 0:
+            self.logger.debug("unexpected disconnection")
 
 
 # debug main
