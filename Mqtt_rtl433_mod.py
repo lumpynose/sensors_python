@@ -61,7 +61,7 @@ class Mqtt_rtl433(object):
 
     def on_disconnect(self, client, userdata, rc):
         if rc != 0:
-            self.logger.debug("unexpected disconnection")
+            self.logger.warn("unexpected disconnection")
 
 
 # debug main
