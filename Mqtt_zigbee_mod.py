@@ -4,6 +4,11 @@ import time
 import json
 import logging
 
+#===============================================================================
+# values from zigbee temperature sensors are fed to mqtt via
+# zigbee2mqtt, available from https://github.com/Koenkk/zigbee2mqtt
+#===============================================================================
+
 
 class Mqtt_zigbee(object):
 

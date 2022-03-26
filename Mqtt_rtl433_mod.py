@@ -4,6 +4,11 @@ import time
 import json
 import logging
 
+#===============================================================================
+# values from 433mhz sensors are fed to mqtt via the rtl_433 linux program
+# with rtl_433 -C customary -F "mqtt://localhost:1883,events=rtl_433[/model]"
+#===============================================================================
+
 
 class Mqtt_rtl433(object):
 
