@@ -24,6 +24,7 @@ class Mqtt(object):
 
         self.client.on_connect = self.on_connect
         self.client.on_disconnect = self.on_disconnect
+        self.client.on_subscribe = self.on_subscribe
 
         self.client.message_callback_add("rtl_433/#",
                     self.on_message_rtl433)
@@ -43,10 +44,10 @@ class Mqtt(object):
             if len(sensor) != 2:
                 return
 
-            if sensor[1] not in self.sensor_names.keys():
+            if sensor[1] not in self.rtl433_sensor_names.keys():
                 return
 
-            sensor_name = self.sensor_names[sensor[1]]
+            sensor_name = self.rtl433_sensor_names[sensor[1]]
 
             tempt = round(float(json.loads(msg.payload.decode())["temperature_F"]), 1)
 
@@ -87,8 +88,8 @@ class Mqtt(object):
         self.logger.debug("connected: {}".format(rc))
 
         if rc == 0:
-            self.client.subscribe(("zigbee2mqtt/temperature/#", 2),
-                        ("rtl_433/#", 2))
+            self.client.subscribe([("zigbee2mqtt/temperature/#", 2),
+                        ("rtl_433/#", 2)])
 
     def on_disconnect(self, client, userdata, rc):
         if rc != 0:

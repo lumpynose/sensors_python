@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter import ttk
 
-from Mqtt_zigbee_mod import Mqtt_zigbee
-from Mqtt_rtl433_mod import Mqtt_rtl433
-from Mqtt_mod import import Mqtt 
+# from Mqtt_zigbee_mod import Mqtt_zigbee
+# from Mqtt_rtl433_mod import Mqtt_rtl433
+
+from Mqtt_mod import Mqtt
 
 import logging
 import os
