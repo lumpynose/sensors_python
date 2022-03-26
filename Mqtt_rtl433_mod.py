@@ -8,7 +8,9 @@ import logging
 class Mqtt_rtl433(object):
 
     def __init__(self, sensor_values):
-        self.sensor_names = ("Prologue-TH", "Acurite-Tower", "Oregon-THGR122N")
+        self.sensor_names = {"Prologue-TH":"outside",
+                             "Acurite-Tower":"garage",
+                             "Oregon-THGR122N":"attic"}
 
         self.sensor_values = sensor_values
 
@@ -36,10 +38,10 @@ class Mqtt_rtl433(object):
             if len(sensor) != 2:
                 return
 
-            sensor_name = sensor[1]
-
-            if sensor_name not in self.sensor_names:
+            if sensor[1] not in self.sensor_names.keys():
                 return
+
+            sensor_name = self.sensor_names[sensor[1]]
 
             tempt = round(float(json.loads(msg.payload.decode())["temperature_F"]), 1)
 

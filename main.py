@@ -80,7 +80,8 @@ if __name__ == '__main__':
     logging.basicConfig(filename = log_file,
                         encoding = 'utf-8',
                         format = '%(asctime)s %(message)s',
-                        datefmt = '%I:%M:%S')
+                        datefmt = '%I:%M:%S',
+                        level = logging.WARN)
     logger = logging.getLogger('sensors')
 
     root = Tk();
