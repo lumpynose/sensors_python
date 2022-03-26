@@ -38,6 +38,15 @@ class Mqtt(object):
 
         self.client.loop_start()
 
+    def update_values(self, sensor_name, tempt):
+        if sensor_name not in self.sensor_values.keys():
+            self.sensor_values.update({sensor_name:dict()})
+
+        now = datetime.now()
+
+        self.sensor_values[sensor_name]["time"] = now.strftime("%H:%M")
+        self.sensor_values[sensor_name]["temperature"] = tempt
+
     def on_message_rtl433(self, client, userdata, msg):
         self.logger.debug("{} {}".format(msg.topic, msg.payload.decode()))
 
@@ -53,15 +62,7 @@ class Mqtt(object):
 
             tempt = round(float(json.loads(msg.payload.decode())["temperature_F"]), 1)
 
-            now = datetime.now()
-
-            if sensor_name in self.sensor_values.keys():
-                self.sensor_values[sensor_name]["time"] = now.strftime("%H:%M")
-                self.sensor_values[sensor_name]["temperature"] = tempt
-            else:
-                self.sensor_values.update({sensor_name:
-                                  {"time": now.strftime("%H:%M"),
-                                   "temperature": tempt}})
+            self.update_values(sensor_name, tempt)
 
     def on_message_zigbee(self, client, userdata, msg):
         self.logger.debug("{} {}".format(msg.topic, msg.payload.decode()))
@@ -76,15 +77,7 @@ class Mqtt(object):
             # convert celsius to fahrenheit
             tempt = round(1.8000 * float(json.loads(msg.payload.decode())["temperature"]) + 32, 1)
 
-            now = datetime.now()
-
-            if sensor_name in self.sensor_values.keys():
-                self.sensor_values[sensor_name]["time"] = now.strftime("%H:%M")
-                self.sensor_values[sensor_name]["temperature"] = tempt
-            else:
-                self.sensor_values.update({sensor_name:
-                                  {"time": now.strftime("%H:%M"),
-                                   "temperature": tempt}})
+            self.update_values(sensor_name, tempt)
 
     def on_connect(self, client, userdata, flags, rc):
         self.logger.debug("connected: {}".format(rc))
