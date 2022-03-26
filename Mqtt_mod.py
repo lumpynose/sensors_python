@@ -8,9 +8,11 @@ import logging
 class Mqtt(object):
 
     def __init__(self, sensor_values):
-        self.rtl433_sensor_names = {"Prologue-TH":"outside",
+        self.rtl433_sensor_names = {
+                            "Prologue-TH":"outside",
                              "Acurite-Tower":"garage",
-                             "Oregon-THGR122N":"attic"}
+                             "Oregon-THGR122N":"attic"
+                            }
 
         self.sensor_values = sensor_values
 
