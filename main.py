@@ -3,6 +3,7 @@ from tkinter import ttk
 
 from Mqtt_zigbee_mod import Mqtt_zigbee
 from Mqtt_rtl433_mod import Mqtt_rtl433
+from Mqtt_mod import import Mqtt 
 
 import logging
 import os
@@ -98,8 +99,9 @@ if __name__ == '__main__':
     sensor_rows = dict()
     sensor_values = dict()
 
-    mqz = Mqtt_zigbee(sensor_values)
-    mqr = Mqtt_rtl433(sensor_values)
+    # mqz = Mqtt_zigbee(sensor_values)
+    # mqr = Mqtt_rtl433(sensor_values)
+    mqtt = Mqtt(sensor_values)
 
     set_style()
 
