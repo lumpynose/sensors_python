@@ -1,0 +1,14 @@
+[Unit]
+Description=Start the rtl_433 process
+After=network.target
+
+[Service]
+ExecStart=/usr/local/etc/rtl433.sh
+WorkingDirectory=/tmp
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=rusty
+
+[Install]
+WantedBy=multi-user.target
