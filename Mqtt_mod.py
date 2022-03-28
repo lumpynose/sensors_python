@@ -57,6 +57,7 @@ class Mqtt(object):
 
             channel = json.loads(msg.payload.decode())["channel"]
 
+            # following code from u/xelf on reddit
             lookup = { v:k for k, v in self.rtl433_sensor_names.items() }
 
             sensor_name = lookup.get((sensor[1], channel))
