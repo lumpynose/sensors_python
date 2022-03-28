@@ -1,6 +1,5 @@
 import paho.mqtt.client as mqtt
 from datetime import datetime
-import time
 import json
 import logging
 
@@ -9,9 +8,10 @@ class Mqtt(object):
 
     def __init__(self, sensor_values):
         self.rtl433_sensor_names = {
-                            "Prologue-TH":"outside",
-                             "Acurite-Tower":"garage",
-                             "Oregon-THGR122N":"attic"
+                            "wrongside":("Prologue-TH", 2),
+                            "outside":("Prologue-TH", 1),
+                            "garage":("Acurite-Tower", "A"),
+                            "attic":("Oregon-THGR122N", 1)
                             }
 
         self.sensor_values = sensor_values
@@ -55,14 +55,15 @@ class Mqtt(object):
             if len(sensor) != 2:
                 return
 
-            if sensor[1] not in self.rtl433_sensor_names.keys():
-                return
+            channel = json.loads(msg.payload.decode())["channel"]
 
-            sensor_name = self.rtl433_sensor_names[sensor[1]]
+            lookup = { v:k for k, v in self.rtl433_sensor_names.items() }
 
-            tempt = round(float(json.loads(msg.payload.decode())["temperature_F"]), 1)
-
-            self.update_values(sensor_name, tempt)
+            sensor_name = lookup.get((sensor[1], channel))
+            if sensor_name:
+                self.logger.debug("found {}, {}".format(sensor_name, channel))
+                tempt = round(float(json.loads(msg.payload.decode())["temperature_F"]), 1)
+                self.update_values(sensor_name, tempt)
 
     def on_message_zigbee(self, client, userdata, msg):
         self.logger.debug("{} {}".format(msg.topic, msg.payload.decode()))
